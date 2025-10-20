@@ -1,7 +1,13 @@
-export default function Home() {
+import { GetStartedButton } from '@/components/get-started'
+import { APP_NAME } from '@/lib/constants'
+
+export default async function Home() {
   return (
-    <div className='grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-(family-name:--font-geist-sans) sm:p-20'>
-      Home Page
+    <div className='flex h-dvh items-center justify-center'>
+      <div className='flex flex-col items-center justify-center gap-8'>
+        <h1 className='text-6xl font-bold'>{APP_NAME}</h1>
+        <GetStartedButton />
+      </div>
     </div>
   )
 }

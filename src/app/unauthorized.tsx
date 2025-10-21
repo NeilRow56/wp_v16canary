@@ -8,7 +8,7 @@ export default function UnauthorizedPage() {
   const pathname = usePathname()
 
   return (
-    <main className='flex grow items-center justify-center px-4 text-center'>
+    <main className='flex h-dvh grow items-center justify-center px-4 text-center'>
       <div className='space-y-6'>
         <div className='space-y-2'>
           <h1 className='text-2xl font-semibold'>401 - Unauthorized</h1>
@@ -16,7 +16,7 @@ export default function UnauthorizedPage() {
         </div>
         <div>
           <Button asChild>
-            <Link href={`/sign-in?redirect=${pathname}`}>Sign in</Link>
+            <Link href={`/auth/sign-in?redirect=${pathname}`}>Sign in</Link>
           </Button>
         </div>
       </div>

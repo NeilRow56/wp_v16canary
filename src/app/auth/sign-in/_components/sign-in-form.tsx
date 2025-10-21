@@ -19,53 +19,66 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useForm } from 'react-hook-form'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 import { APP_NAME } from '@/lib/constants'
-import { signIn } from '@/server/users'
-import { PasswordInput } from '@/components/form/password-input'
 
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, { error: 'Password is required ' })
+import { PasswordInput } from '@/components/form/password-input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { signIn } from '@/lib/auth-client'
+
+const signInSchema = z.object({
+  email: z.email({ message: 'Please enter a valid email' }),
+  password: z.string().min(1, { message: 'Password is required' }),
+  rememberMe: z.boolean().optional()
 })
 
-export const SignInForm = ({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) => {
-  const router = useRouter()
+type SignInValues = z.infer<typeof signInSchema>
 
-  const [isPending, setPending] = useState(false)
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export function SignInForm() {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const redirect = searchParams.get('redirect')
+
+  const form = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
-      password: ''
+      password: '',
+      rememberMe: false
     }
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setPending(true)
+  async function onSubmit({ email, password, rememberMe }: SignInValues) {
+    setError(null)
+    setLoading(true)
 
-    const { success, message } = await signIn(values.email, values.password)
+    const { error } = await signIn.email({
+      email,
+      password,
+      rememberMe
+    })
 
-    if (success) {
-      toast.success(message as string)
-      router.push('/dashboard')
+    setLoading(false)
+
+    if (error) {
+      setError(error.message || 'Something went wrong')
     } else {
-      toast.error(message as string)
+      toast.success('Signed in successfully')
+      router.push(redirect ?? '/dashboard')
     }
-
-    setPending(false)
   }
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex flex-col gap-6')}>
       <Card className='overflow-hidden p-0'>
         <CardContent className='grid p-0 md:grid-cols-2'>
           <Form {...form}>
@@ -116,6 +129,21 @@ export const SignInForm = ({
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name='rememberMe'
+                    render={({ field }) => (
+                      <FormItem className='flex items-center gap-2'>
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormLabel>Remember me</FormLabel>
+                      </FormItem>
+                    )}
+                  />
                   <Link
                     href='/auth/forgot-password'
                     className='ml-auto text-sm text-blue-600 underline-offset-4 hover:underline'
@@ -123,13 +151,17 @@ export const SignInForm = ({
                     Forgot your password?
                   </Link>
                 </div>
-
+                {error && (
+                  <div role='alert' className='text-sm text-red-600'>
+                    {error}
+                  </div>
+                )}
                 <Button
                   type='submit'
                   className='w-full cursor-pointer'
-                  disabled={isPending}
+                  disabled={loading}
                 >
-                  {isPending ? (
+                  {loading ? (
                     <Loader2 className='size-4 animate-spin' />
                   ) : (
                     'Login'

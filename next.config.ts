@@ -2,9 +2,11 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   experimental: {
-    turbopackFileSystemCacheForDev: true
+    turbopackFileSystemCacheForDev: true,
+    authInterrupts: true
   },
   reactCompiler: true,
+
   images: {
     remotePatterns: [
       {

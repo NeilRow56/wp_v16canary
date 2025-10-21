@@ -8,18 +8,24 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { getServerSession } from '@/lib/get-session'
 
 import { format } from 'date-fns'
 import { CalendarDaysIcon, MailIcon, ShieldIcon, UserIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { unauthorized } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Dashboard'
 }
 
-export default function DashboardPage() {
-  // TODO: Check for authentication
+export default async function DashboardPage() {
+  // getServerSession is a function in lib folder
+  const session = await getServerSession()
+  const user = session?.user
+
+  if (!user) unauthorized()
 
   return (
     <main className='mx-auto w-full max-w-6xl px-4 py-12'>
@@ -30,7 +36,7 @@ export default function DashboardPage() {
             Welcome back! Here&apos;s your account overview.
           </p>
         </div>
-        {/* TODO: Use actual user data */}
+        {!user.emailVerified && <EmailVerificationAlert />}
         <EmailVerificationAlert />
         <ProfileInformation />
       </div>

@@ -25,10 +25,11 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { APP_NAME } from '@/lib/constants'
-import { signUp } from '@/server/users'
+// import { signUp } from '@/server/users'
 import { PasswordInput } from '@/components/form/password-input'
+import { signUp } from '@/lib/auth-client'
 
-const formSchema = z
+const signUpSchema = z
   .object({
     name: z.string().min(3, { error: 'Name should be >= 3 Characters ' }),
     email: z.email(),
@@ -44,15 +45,15 @@ const formSchema = z
     path: ['confirmPassword']
   })
 
-export const SignUpForm = ({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) => {
+type SignUpValues = z.infer<typeof signUpSchema>
+
+export function SignUpForm() {
+  const [error, setError] = useState<string | null>(null)
+
   const router = useRouter()
 
-  const [isPending, setPending] = useState(false)
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -61,29 +62,30 @@ export const SignUpForm = ({
     }
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setPending(true)
+  async function onSubmit({ email, password, name }: SignUpValues) {
+    setError(null)
 
-    const { success, message } = await signUp(
-      values.email,
-      values.password,
-      values.name
-    )
+    const { error } = await signUp.email({
+      email,
+      password,
+      name,
+      callbackURL: '/email-verified'
+    })
 
-    if (success) {
-      toast.success(
-        `${message as string} Please check your email for verification.`
-      )
-      router.push('/')
+    if (error) {
+      setError(error.message || 'Something went wrong')
     } else {
-      toast.error(message as string)
+      toast.success(
+        'Signed up successfully. Please check your email for verification.'
+      )
+      router.push('/dashboard')
     }
-
-    setPending(false)
   }
 
+  const loading = form.formState.isSubmitting
+
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex flex-col gap-6')}>
       <Card className='overflow-hidden p-0'>
         <CardContent className='grid p-0 md:grid-cols-2'>
           <Form {...form}>
@@ -174,13 +176,18 @@ export const SignUpForm = ({
                     )}
                   />
                 </div>
+                {error && (
+                  <div role='alert' className='text-sm text-red-600'>
+                    {error}
+                  </div>
+                )}
 
                 <Button
                   type='submit'
                   className='w-full cursor-pointer'
-                  disabled={isPending}
+                  disabled={loading}
                 >
-                  {isPending ? (
+                  {loading ? (
                     <Loader2 className='size-4 animate-spin' />
                   ) : (
                     'Register'

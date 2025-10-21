@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { User } from '@/lib/auth'
 import { getServerSession } from '@/lib/get-session'
 
-import { format } from 'date-fns'
 import { CalendarDaysIcon, MailIcon, ShieldIcon, UserIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -37,22 +37,18 @@ export default async function DashboardPage() {
           </p>
         </div>
         {!user.emailVerified && <EmailVerificationAlert />}
-        <EmailVerificationAlert />
-        <ProfileInformation />
+
+        <ProfileInformation user={user} />
       </div>
     </main>
   )
 }
 
-function ProfileInformation() {
+interface ProfileInformationProps {
+  user: User
+}
+function ProfileInformation({ user }: ProfileInformationProps) {
   // TODO: Render real user info
-  const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    image: undefined,
-    role: 'admin',
-    createdAt: new Date()
-  }
 
   return (
     <Card>
@@ -73,12 +69,10 @@ function ProfileInformation() {
               image={user.image}
               className='size-32 sm:size-24'
             />
-            {user.role && (
-              <Badge>
-                <ShieldIcon className='size-3' />
-                {user.role}
-              </Badge>
-            )}
+
+            <Badge>
+              <ShieldIcon className='size-3' />
+            </Badge>
           </div>
 
           <div className='flex-1 space-y-4'>
@@ -93,7 +87,8 @@ function ProfileInformation() {
                 Member Since
               </div>
               <p className='font-medium'>
-                {format(user.createdAt, 'MMMM d, yyyy')}
+                {' '}
+                {new Date(user.createdAt).toLocaleString('en-GB').slice(0, 10)}
               </p>
             </div>
           </div>

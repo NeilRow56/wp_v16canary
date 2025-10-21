@@ -2,8 +2,13 @@ import { auth } from '@/lib/auth'
 
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import React from 'react'
+
 import { SignUpForm } from './_components/sign-up-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Sign up'
+}
 
 const SignupPage = async () => {
   const headersList = await headers()

@@ -26,6 +26,7 @@ import { useState } from 'react'
 
 import { APP_NAME } from '@/lib/constants'
 import { signUp } from '@/server/users'
+import { PasswordInput } from '@/components/form/password-input'
 
 const formSchema = z
   .object({
@@ -143,9 +144,8 @@ export const SignUpForm = ({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type='password'
-                            placeholder='********'
+                          <PasswordInput
+                            autoComplete='current-password webauthn'
                             {...field}
                           />
                         </FormControl>
@@ -153,6 +153,9 @@ export const SignUpForm = ({
                       </FormItem>
                     )}
                   />
+                  <h3 className='text-muted-foreground text-sm'>
+                    Password must be at least 8 characters
+                  </h3>
                 </div>
                 <div className='grid gap-3'>
                   <FormField
@@ -160,13 +163,11 @@ export const SignUpForm = ({
                     name='confirmPassword'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel className='text-primary font-bold'>
+                          Confirm Password
+                        </FormLabel>
                         <FormControl>
-                          <Input
-                            type='password'
-                            placeholder='********'
-                            {...field}
-                          />
+                          <PasswordInput {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils'
 
 import { APP_NAME } from '@/lib/constants'
 import { signIn } from '@/server/users'
+import { PasswordInput } from '@/components/form/password-input'
 
 const formSchema = z.object({
   email: z.email(),
@@ -106,7 +107,10 @@ export const SignInForm = ({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder='********' {...field} />
+                          <PasswordInput
+                            autoComplete='current-password webauthn'
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

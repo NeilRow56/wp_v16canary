@@ -35,10 +35,13 @@ const signUpSchema = z
     email: z.email(),
     password: z
       .string()
-      .min(8, { error: 'Password should be >= 8 Characters ' }),
-    confirmPassword: z
-      .string()
-      .min(8, { error: 'Password should be >= 8 Characters ' })
+      .min(1, { message: 'Password is required' })
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .regex(/[^A-Za-z0-9]/, {
+        message:
+          'Password must contain at least one special character i.e. not a number or letter'
+      }),
+    confirmPassword: z.string().min(1, { message: 'Please confirm password' })
   })
   .refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",

@@ -1,8 +1,6 @@
 'use client'
 
 import { LoadingButton } from '@/components/shared/loading-button'
-import { LoadingSwap } from '@/components/shared/loading-swap'
-import { Button } from '@/components/ui/button'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { deleteApplication } from '../action'

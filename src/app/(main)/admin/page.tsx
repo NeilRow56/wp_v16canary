@@ -1,6 +1,6 @@
 import { getServerSession } from '@/lib/get-session'
 import type { Metadata } from 'next'
-import { forbidden, unauthorized } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { DeleteApplication } from './_components/delete-application'
 
 export const metadata: Metadata = {
@@ -11,9 +11,9 @@ export default async function AdminPage() {
   const session = await getServerSession()
   const user = session?.user
 
-  if (!user) unauthorized()
+  if (!user) redirect('/auth/sign-in')
 
-  if (user.role !== 'admin') forbidden()
+  if (user.role !== 'admin') redirect('/auth/sign-in')
 
   return (
     <main className='mx-auto w-full max-w-6xl px-4 py-12'>

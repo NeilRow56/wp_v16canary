@@ -1,6 +1,5 @@
-import { BookOpenIcon, ChevronDownIcon, Home } from 'lucide-react'
+import { BookOpenIcon, Home, ShieldIcon, UserIcon } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,39 +12,39 @@ import {
 } from '@/components/ui/dropdown-menu'
 import Link from 'next/link'
 import { SignOutButton } from '@/components/sign-out-button'
+import { User } from '@/lib/auth'
+import Image from 'next/image'
 
-interface iAppProps {
-  name: string
-  email: string
-  image: string | undefined
+interface userDropdownProps {
+  user: User
 }
 
-export function UserDropdown({ name, email, image }: iAppProps) {
+export function UserDropdown({ user }: userDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='h-auto p-0 hover:bg-transparent'>
-          <Avatar>
-            <AvatarImage
-              src={image ? image : './avatar.png'}
-              alt='Profile image'
+        <Button variant='outline'>
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name}
+              width={16}
+              height={16}
+              className='rounded-full object-cover'
             />
-            <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <ChevronDownIcon
-            size={16}
-            className='opacity-60'
-            aria-hidden='true'
-          />
+          ) : (
+            <UserIcon />
+          )}
+          <span className='max-w-48 truncate'>{user.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='min-w-48'>
         <DropdownMenuLabel className='flex min-w-0 flex-col'>
           <span className='text-foreground truncate text-sm font-medium'>
-            {name}
+            {user.name}
           </span>
           <span className='text-muted-foreground truncate text-xs font-normal'>
-            {email}
+            {user.email}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -76,6 +75,7 @@ export function UserDropdown({ name, email, image }: iAppProps) {
               <span>Dashboard</span>
             </Link>
           </DropdownMenuItem>
+          {user.role === 'admin' && <AdminItem />}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
 
@@ -84,5 +84,15 @@ export function UserDropdown({ name, email, image }: iAppProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+function AdminItem() {
+  return (
+    <DropdownMenuItem asChild>
+      <Link href='/admin'>
+        <ShieldIcon className='size-4' /> <span>Admin</span>
+      </Link>
+    </DropdownMenuItem>
   )
 }

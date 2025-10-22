@@ -60,11 +60,7 @@ export async function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-                <UserDropdown
-                  name={session.user.name}
-                  email={session.user.email}
-                  image={session.user.image || ''}
-                />
+                <UserDropdown user={user} />
               </>
             ) : (
               <>

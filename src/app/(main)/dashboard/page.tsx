@@ -48,8 +48,6 @@ interface ProfileInformationProps {
   user: User
 }
 function ProfileInformation({ user }: ProfileInformationProps) {
-  // TODO: Render real user info
-
   return (
     <Card>
       <CardHeader>
@@ -70,9 +68,12 @@ function ProfileInformation({ user }: ProfileInformationProps) {
               className='size-32 sm:size-24'
             />
 
-            <Badge>
-              <ShieldIcon className='size-3' />
-            </Badge>
+            {user.role && (
+              <Badge>
+                <ShieldIcon className='size-3' />
+                {user.role}
+              </Badge>
+            )}
           </div>
 
           <div className='flex-1 space-y-4'>

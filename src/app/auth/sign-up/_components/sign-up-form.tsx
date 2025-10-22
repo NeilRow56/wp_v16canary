@@ -28,19 +28,13 @@ import { APP_NAME } from '@/lib/constants'
 // import { signUp } from '@/server/users'
 import { PasswordInput } from '@/components/form/password-input'
 import { signUp } from '@/lib/auth-client'
+import { passwordSchema } from '@/lib/validation'
 
 const signUpSchema = z
   .object({
     name: z.string().min(3, { error: 'Name should be >= 3 Characters ' }),
     email: z.email(),
-    password: z
-      .string()
-      .min(1, { message: 'Password is required' })
-      .min(8, { message: 'Password must be at least 8 characters' })
-      .regex(/[^A-Za-z0-9]/, {
-        message:
-          'Password must contain at least one special character i.e. not a number or letter'
-      }),
+    password: passwordSchema,
     confirmPassword: z.string().min(1, { message: 'Please confirm password' })
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -158,8 +152,9 @@ export function SignUpForm() {
                       </FormItem>
                     )}
                   />
-                  <h3 className='text-muted-foreground text-sm'>
-                    Password must be at least 8 characters
+                  <h3 className='text-muted-foreground text-xs'>
+                    Password must contain at least one special character and be
+                    a minimum of 8 characters.
                   </h3>
                 </div>
                 <div className='grid gap-3'>

@@ -1,11 +1,12 @@
 import ForgotPasswordEmail from '@/components/emails/reset-password'
 import VerifyEmail from '@/components/emails/verify-email'
 import { db } from '@/db'
-
+import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
 import { Resend } from 'resend'
+import { passwordSchema } from './validation'
 
 const resend = new Resend(process.env.RESEND_API_KEY as string)
 
@@ -55,6 +56,24 @@ export const auth = betterAuth({
       }
     }
   },
+  hooks: {
+    before: createAuthMiddleware(async ctx => {
+      if (
+        ctx.path === '/sign-up/email' ||
+        ctx.path === '/reset-password' ||
+        ctx.path === '/change-password'
+      ) {
+        const password = ctx.body.password || ctx.body.newPassword
+        const { error } = passwordSchema.safeParse(password)
+        if (error) {
+          throw new APIError('BAD_REQUEST', {
+            message: 'Password not strong enough'
+          })
+        }
+      }
+    })
+  },
+
   database: drizzleAdapter(db, {
     provider: 'pg'
   }),

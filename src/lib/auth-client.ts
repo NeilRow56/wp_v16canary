@@ -20,6 +20,7 @@ export const {
   signOut,
   useSession,
   getSession,
+  revokeSessions,
   sendVerificationEmail,
   forgetPassword,
   resetPassword,

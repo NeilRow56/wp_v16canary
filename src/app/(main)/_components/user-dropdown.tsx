@@ -1,4 +1,4 @@
-import { BookOpenIcon, Home, ShieldIcon, UserIcon } from 'lucide-react'
+import { BookOpenIcon, Home, ShieldIcon, User2, UserIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -53,6 +53,12 @@ export function UserDropdown({ user }: userDropdownProps) {
             <Link className='flex items-center' href='/'>
               <Home size={16} className='opacity-60' aria-hidden='true' />
               <span>Home</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link className='flex items-center' href='/profile'>
+              <User2 size={16} className='opacity-60' aria-hidden='true' />
+              <span>Profile</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>

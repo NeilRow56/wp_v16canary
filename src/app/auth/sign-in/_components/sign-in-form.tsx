@@ -145,7 +145,7 @@ export function SignInForm() {
                     )}
                   />
                   <Link
-                    href='/auth/forgot-password'
+                    href='/profile/forgot-password'
                     className='ml-auto text-sm text-blue-600 underline-offset-4 hover:underline'
                   >
                     Forgot your password?

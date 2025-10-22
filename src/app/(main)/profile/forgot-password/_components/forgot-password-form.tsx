@@ -47,7 +47,7 @@ export function ForgotPasswordForm({
 
     const { error } = await forgetPassword({
       email: values.email,
-      redirectTo: '/auth/reset-password'
+      redirectTo: '/profile/reset-password'
     })
 
     if (error) {
